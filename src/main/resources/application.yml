@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      host: 78.79.12.31
+      port: 27017
+      database: state_data

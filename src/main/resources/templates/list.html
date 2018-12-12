@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>订单:状态机</title>
+</head>
+<body>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <h2><a class="btn btn-sm btn-success" href="emp" th:href="@{/create}">添加</a></h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>orderNo</th>
+                <th>desc</th>
+                <th>status</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order:${list.data}">
+                <td th:text="${order.id}"></td>
+                <td>[[${order.orderNo}]]</td>
+                <td th:text="${order.desc}"></td>
+                <!--<td th:text="${order.gender}==0?'女':'男'"></td>-->
+                <td th:text="${order.status}"></td>
+                <!--<td th:text="${#dates.format(emp.birth, 'yyyy-MM-dd HH:mm')}"></td>-->
+                <td>
+                    <a class="btn btn-sm btn-primary" th:href="@{/pay(id=${order.id})}">支付成功</a>
+                        <a class="btn btn-sm btn-primary" th:href="@{/deliver(id=${order.id})}">确认发货</a>
+                            <a class="btn btn-sm btn-primary" th:href="@{/receive(id=${order.id})}">确认收货</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
