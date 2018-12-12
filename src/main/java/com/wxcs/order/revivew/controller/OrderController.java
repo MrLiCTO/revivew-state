@@ -17,7 +17,7 @@ public class OrderController {
     private OrderService orderService;
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
-    public ModelAndView list(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+    public ModelAndView list(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) throws Exception {
         PageInfo<Order> pageInfo = orderService.list(pageNo, pageSize);
         ModelAndView modelAndView = new ModelAndView("list");
         modelAndView.addObject("list", pageInfo);
@@ -25,31 +25,31 @@ public class OrderController {
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String create(Order order) {
+    public String create(Order order) throws Exception {
         orderService.create(order);
         return "redirect:/list";
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.GET)
-    public String delete(String id) {
+    public String delete(String id) throws Exception {
         orderService.delete(id);
         return "redirect:/list";
     }
 
     @RequestMapping(value = "pay", method = RequestMethod.GET)
-    public String pay(String id) {
+    public String pay(String id) throws Exception {
         orderService.pay(id);
         return "redirect:/list";
     }
 
     @RequestMapping(value = "deliver", method = RequestMethod.GET)
-    public String deliver(String id) {
+    public String deliver(String id) throws Exception {
         orderService.deliver(id);
         return "redirect:/list";
     }
 
     @RequestMapping(value = "receive", method = RequestMethod.GET)
-    public String receive(String id) {
+    public String receive(String id) throws Exception {
         orderService.receive(id);
         return "redirect:/list";
     }

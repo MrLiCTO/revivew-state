@@ -28,7 +28,7 @@ public class OrderStateHandler {
      * @param order
      * @return
      */
-    public boolean sendEvent(Message<OrderStatusChangeEvent> message, Order order) {
+    public void sendEvent(Message<OrderStatusChangeEvent> message, Order order) throws Exception {
         synchronized (String.valueOf(order.getId()).intern()) {
             boolean result = false;
             StateMachine<OrderStatus, OrderStatusChangeEvent> orderStateMachine = orderStateMachineFactory.getStateMachine(OrderStateMachineConfig.orderStateMachineId);
@@ -46,11 +46,26 @@ public class OrderStateHandler {
                 persister.persist(orderStateMachine, order.getId());
                 orderRepository.save(order);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new Exception();
             } finally {
                 orderStateMachine.stop();
             }
-            return result;
+        }
+    }
+
+
+    public void createOrder(Order order) throws Exception {
+        StateMachine<OrderStatus, OrderStatusChangeEvent> orderStateMachine = orderStateMachineFactory.getStateMachine(OrderStateMachineConfig.orderStateMachineId);
+        try {
+            orderStateMachine.start();
+            order.setStatus(OrderStatus.WAIT_PAYMENT);
+            //持久化状态机状态
+            persister.persist(orderStateMachine, order.getId());
+            orderRepository.save(order);
+        } catch (Exception e) {
+            throw new Exception();
+        } finally {
+            orderStateMachine.stop();
         }
     }
 }

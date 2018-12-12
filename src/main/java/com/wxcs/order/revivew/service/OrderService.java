@@ -6,6 +6,7 @@ import com.wxcs.order.revivew.handler.OrderStateHandler;
 import com.wxcs.order.revivew.model.Order;
 import com.wxcs.order.revivew.po.PageInfo;
 import com.wxcs.order.revivew.repository.OrderRepository;
+import com.wxcs.order.revivew.utils.UuidUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,25 +22,25 @@ public class OrderService {
     @Autowired
     private OrderStateHandler orderStateHandler;
 
-    public PageInfo<Order> list(Integer pageNo, Integer pageSize) {
+    public PageInfo<Order> list(Integer pageNo, Integer pageSize) throws Exception{
         Page<Order> page = orderRepository.findAll(PageRequest.of(0, pageSize, Sort.by(Sort.Direction.DESC, "orderNo")));
         if (page != null)
             return new PageInfo<Order>(page.getContent(), page.getTotalPages());
         return null;
     }
 
-    public void delete(String id) {
+    public void delete(String id) throws Exception{
         orderRepository.deleteById(id);
     }
 
-    public void create(Order order) {
-        order.setStatus(OrderStatus.WAIT_PAYMENT);
+    public void create(Order order) throws Exception{
+        order.setId(UuidUtil.get32UUID());
         order.setDesc("测试");
         order.setOrderNo(System.currentTimeMillis() / 1000 + "");
-        orderRepository.save(order);
+        orderStateHandler.createOrder(order);
     }
 
-    public void receive(String id) {
+    public void receive(String id) throws Exception{
         Order order = orderRepository.findById(id).get();
         if (!OrderStatus.WAIT_RECEIVE.name().equals(order.getStatus().name()))
             return;
@@ -47,7 +48,7 @@ public class OrderService {
         orderStateHandler.sendEvent(message, order);
     }
 
-    public void deliver(String id) {
+    public void deliver(String id) throws Exception{
         Order order = orderRepository.findById(id).get();
         if (!OrderStatus.WAIT_DELIVER.name().equals(order.getStatus().name()))
             return;
@@ -55,7 +56,7 @@ public class OrderService {
         orderStateHandler.sendEvent(message, order);
     }
 
-    public void pay(String id) {
+    public void pay(String id) throws Exception{
         Order order = orderRepository.findById(id).get();
         if (!OrderStatus.WAIT_PAYMENT.name().equals(order.getStatus().name()))
             return;
