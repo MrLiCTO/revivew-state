@@ -22,6 +22,14 @@ public class OrderStateListener {
         return true;
     }
 
+    @OnTransition(source = "WAIT_PAYMENT", target = "CLOSED")
+    public boolean cancelTransition(Message<OrderStatusChangeEvent> message) {
+        Order order = (Order) message.getHeaders().get("order");
+        order.setStatus(OrderStatus.CLOSED);
+        System.out.println("支付 headers=" + message.getHeaders().toString());
+        return true;
+    }
+
     @OnTransition(source = "WAIT_DELIVER", target = "WAIT_RECEIVE")
     public boolean deliverTransition(Message<OrderStatusChangeEvent> message) {
         Order order = (Order) message.getHeaders().get("order");
@@ -34,6 +42,22 @@ public class OrderStateListener {
     public boolean receiveTransition(Message<OrderStatusChangeEvent> message) {
         Order order = (Order) message.getHeaders().get("order");
         order.setStatus(OrderStatus.FINISH);
+        System.out.println("收货 headers=" + message.getHeaders().toString());
+        return true;
+    }
+
+    @OnTransition(source = "FINISH", target = "WAIT_RETURN")
+    public boolean returnTransition(Message<OrderStatusChangeEvent> message) {
+        Order order = (Order) message.getHeaders().get("order");
+        order.setStatus(OrderStatus.WAIT_RETURN);
+        System.out.println("收货 headers=" + message.getHeaders().toString());
+        return true;
+    }
+
+    @OnTransition(source = {"WAIT_RECEIVE","WAIT_DELIVER","WAIT_RETURN"}, target = "RETURN")
+    public boolean refundTransition(Message<OrderStatusChangeEvent> message) {
+        Order order = (Order) message.getHeaders().get("order");
+        order.setStatus(OrderStatus.RETURN);
         System.out.println("收货 headers=" + message.getHeaders().toString());
         return true;
     }

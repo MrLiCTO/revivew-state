@@ -5,5 +5,5 @@ package com.wxcs.order.revivew.enums;
  */
 public enum OrderStatusChangeEvent {
     // 支付，发货，确认收货
-    PAYED, DELIVERY, RECEIVED;
+    CANCEL, PAYED, REFUND, DELIVERY, RECEIVED, RETURN, RECEIVERETURN;
 }

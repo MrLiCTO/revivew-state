@@ -59,11 +59,21 @@ public class OrderStateMachineConfig extends StateMachineConfigurerAdapter<Order
     @Override
     public void configure(StateMachineTransitionConfigurer<OrderStatus, OrderStatusChangeEvent> transitions) throws Exception {
         transitions
-                .withExternal().source(OrderStatus.WAIT_PAYMENT).target(OrderStatus.WAIT_DELIVER).event(OrderStatusChangeEvent.PAYED)
+                .withExternal().source(OrderStatus.WAIT_PAYMENT).target(OrderStatus.WAIT_DELIVER).event(OrderStatusChangeEvent.PAYED)//支付
                 .and()
-                .withExternal().source(OrderStatus.WAIT_DELIVER).target(OrderStatus.WAIT_RECEIVE).event(OrderStatusChangeEvent.DELIVERY)
+                .withExternal().source(OrderStatus.WAIT_PAYMENT).target(OrderStatus.CLOSED).event(OrderStatusChangeEvent.CANCEL)//1 取消
                 .and()
-                .withExternal().source(OrderStatus.WAIT_RECEIVE).target(OrderStatus.FINISH).event(OrderStatusChangeEvent.RECEIVED);
+                .withExternal().source(OrderStatus.WAIT_DELIVER).target(OrderStatus.WAIT_RECEIVE).event(OrderStatusChangeEvent.DELIVERY)//发货
+                .and()
+                .withExternal().source(OrderStatus.WAIT_RECEIVE).target(OrderStatus.FINISH).event(OrderStatusChangeEvent.RECEIVED)//收货
+                .and()
+                .withExternal().source(OrderStatus.WAIT_RECEIVE).target(OrderStatus.RETURN).event(OrderStatusChangeEvent.REFUND)//2退款
+                .and()
+                .withExternal().source(OrderStatus.WAIT_DELIVER).target(OrderStatus.RETURN).event(OrderStatusChangeEvent.REFUND)//2退款
+                .and()
+                .withExternal().source(OrderStatus.FINISH).target(OrderStatus.WAIT_RETURN).event(OrderStatusChangeEvent.RETURN)//3退货
+                .and()
+                .withExternal().source(OrderStatus.WAIT_RETURN).target(OrderStatus.RETURN).event(OrderStatusChangeEvent.RECEIVERETURN);//4退货完成
     }
 
     /**

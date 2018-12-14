@@ -15,6 +15,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 public class OrderService {
     @Autowired
@@ -63,4 +65,38 @@ public class OrderService {
         Message<OrderStatusChangeEvent> message = MessageBuilder.withPayload(OrderStatusChangeEvent.PAYED).setHeader("order", order).build();
         orderStateHandler.sendEvent(message, order);
     }
+
+    public void cancel(String id) throws Exception{
+        Order order = orderRepository.findById(id).get();
+        if (!OrderStatus.WAIT_PAYMENT.name().equals(order.getStatus().name()))
+            return;
+        Message<OrderStatusChangeEvent> message = MessageBuilder.withPayload(OrderStatusChangeEvent.CANCEL).setHeader("order", order).build();
+        orderStateHandler.sendEvent(message, order);
+    }
+
+    public void refund(String id) throws Exception{
+        Order order = orderRepository.findById(id).get();
+        //TODO Arrays.asList(OrderStatus.values()).containsAll();
+        if ((!OrderStatus.WAIT_RECEIVE.name().equals(order.getStatus().name()))&&(!OrderStatus.WAIT_DELIVER.name().equals(order.getStatus().name())))
+            return;
+        Message<OrderStatusChangeEvent> message = MessageBuilder.withPayload(OrderStatusChangeEvent.REFUND).setHeader("order", order).build();
+        orderStateHandler.sendEvent(message, order);
+    }
+
+    public void returng(String id) throws Exception{
+        Order order = orderRepository.findById(id).get();
+        if (!OrderStatus.FINISH.name().equals(order.getStatus().name()))
+            return;
+        Message<OrderStatusChangeEvent> message = MessageBuilder.withPayload(OrderStatusChangeEvent.RETURN).setHeader("order", order).build();
+        orderStateHandler.sendEvent(message, order);
+    }
+
+    public void receiveReturn(String id) throws Exception{
+        Order order = orderRepository.findById(id).get();
+        if (!OrderStatus.WAIT_RETURN.name().equals(order.getStatus().name()))
+            return;
+        Message<OrderStatusChangeEvent> message = MessageBuilder.withPayload(OrderStatusChangeEvent.RECEIVERETURN).setHeader("order", order).build();
+        orderStateHandler.sendEvent(message, order);
+    }
+
 }

@@ -53,4 +53,28 @@ public class OrderController {
         orderService.receive(id);
         return "redirect:/list";
     }
+
+    @RequestMapping(value = "cancel", method = RequestMethod.GET)
+    public String cancel(String id) throws Exception {
+        orderService.cancel(id);
+        return "redirect:/list";
+    }
+
+    @RequestMapping(value = "refund", method = RequestMethod.GET)
+    public String refund(String id) throws Exception {
+        orderService.refund(id);
+        return "redirect:/list";
+    }
+
+    @RequestMapping(value = "receiveReturn", method = RequestMethod.GET)
+    public String receiveReturn(String id) throws Exception {
+        orderService.receiveReturn(id);
+        return "redirect:/list";
+    }
+
+    @RequestMapping(value = "returng", method = RequestMethod.GET)
+    public String returng(String id) throws Exception {
+        orderService.returng(id);
+        return "redirect:/list";
+    }
 }

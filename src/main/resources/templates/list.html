@@ -27,9 +27,13 @@
                 <td th:text="${order.status}"></td>
                 <!--<td th:text="${#dates.format(emp.birth, 'yyyy-MM-dd HH:mm')}"></td>-->
                 <td>
+                    <a class="btn btn-sm btn-primary" th:href="@{/cancel(id=${order.id})}">取消订单</a>
                     <a class="btn btn-sm btn-primary" th:href="@{/pay(id=${order.id})}">支付成功</a>
                         <a class="btn btn-sm btn-primary" th:href="@{/deliver(id=${order.id})}">确认发货</a>
+                            <a class="btn btn-sm btn-primary" th:href="@{/refund(id=${order.id})}">退款</a>
                             <a class="btn btn-sm btn-primary" th:href="@{/receive(id=${order.id})}">确认收货</a>
+                            <a class="btn btn-sm btn-primary" th:href="@{/returng(id=${order.id})}">退货</a>
+                            <a class="btn btn-sm btn-primary" th:href="@{/receiveReturn(id=${order.id})}">确认退货</a>
                 </td>
             </tr>
             </tbody>
